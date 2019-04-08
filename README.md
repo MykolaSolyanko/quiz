@@ -2,267 +2,415 @@
 
 1.
 ```
-Следующее объявлнеия коректное
-int array[10];
+Такой код валидный если наша программа состоит только с одного файла исходного кода
 
+#include <iostream>
+
+long test(int a, int b) {
+  std::cout<< "test" << std::endl;
+  return a + b;
+}
 ```
 
 2.
 ```
-Следующее объявлнеия коректное
-int array[];
-
+Такой код правильный
+long test(int a, int b);
+long test(int a, int b) {
+  return a + b;
+}
+int main(int argc, char const *argv[]) {
+  return 0;
+}
 ```
 
 3.
 ```
-Следующее объявлнеия коректное
-size_t array_size = 100;
-int array[array_size];
+Такой код правильный
+long test(int a, int b);
+long test(int a, int b) {
+  return a + b;
+}
 
+long test(int a, int b) {
+  return a + b;
+}
+
+int main(int argc, char const *argv[]) {
+  return 0;
+}
 ```
-
 
 4.
 ```
-Следующее коректное
-int array[10] {};
-int array1[10] {1,};
-int array2[10] {,,2};
-int array3[] {};
-int array4[] {1, 2, 3};
-int array4[2] {1, 2, 3};
-int array5[2 + 3 + 5] {1, 2, 3};
+Что в этом коде не так
+long test(int a, int b) {
+  return a + b;
+}
+...
+test(10, 40, 50) // 1
+test(10, 40) // 2
+test(40) // 2
+
+int a = 90;
+int b = 100;
+
+std::cout << test(&a, &b) << std::endl;
 ```
 
 5.
 ```
-Следующее коректное
-int array4[2] {1, 2, 3};
-std::cout << array4 << std::endl;
+Что будет на экране
+long mult(int a, b) {
+  return a + b;
+}
+...
+int a = 90;
+int b = 100;
+
+std::cout << mult(a, b) << std::endl;
 ```
 
 6.
 ```
-В чем разница
-char array1[] = "Hello";
-char array2[] = {'H', 'e', 'l', 'l', 'o'};
-char array3[] = {"Hello"};
+Такой код скомпилируеться
+
+void print(int a, int b, int) {
+  std::cout << a << b << std::endl;
+}
+...
+int a = 90;
+int b = 100;
+
+std::cout << print(a, b) << std::endl;
 ```
 
 7.
 ```
-Это валидный код
-const int array[] = {1, 2, 3};
-array[0] = 25;
+Что будет на экране
+
+long calc(auto a, auto b) {
+  return a + b;
+}
+...
+int a = 90;
+int b = 100;
+
+std::cout << print(a, b) << std::endl;
 ```
 
 8.
 ```
-Это валидный код
-const int array[4];
-array[0] = 25;
+Такой код скомпилируеться
+
+auto calc(int a, int b) {
+  return a + b;
+}
+
+long calcSqrt(int a) {
+  if (a > 0) {
+    return sqrt(a);
+  }
+}
+
+bool isPositiv(int a) {
+  if (a > 0) {
+    return true;
+  } else {
+    return &a;
+  }
+}
+
+auto calcSumm(int a, int b, int c) -> decltype(a + b + c) {
+  return a + b + c;
+}
+
 ```
 
 9.
 ```
-Валидный код
-int array[4];
-size_t count = sizeof(array);
-assert(4 == count);
+Что будет на экране
 
-char array[] = "test";
-size_t count = sizeof(array);
-assert(4 == count);
+void changeSign(int a) {
+  if (a > 0) {
+    a = -a;
+  }
+}
+...
+int a = 90;
+changeSign(a);
+
+std::cout << a << std::endl;
 ```
 
 10.
 ```
-Валидный код
-int array[] {1, 2, 3, 4};
+Что будет на экране
 
-std::cout << array[1] << array[4] << st::endl;
+void swap(int &a, int& b) {
+  auto tmp = a;
+  a = b;
+  b = tmp;
+}
+
+
+...
+int a = 90;
+int b = 100;
+
+swap(a, b);
+
+swap(a, 100);
+
+
+std::cout << a  << " " << b<< std::endl;
 ```
 
 11.
 ```
-что в это цикле не так
-size_t length = 10;
+Что будет на экране
 
-int array[length] {1, 2, 3, 4};
-for (int i = 0; i < length; ++i) {
-  std::cout << array[i];
+long mul(int a, int b = 10) {
+  return a * b;
 }
+
+
+...
+
+std::cout << mul(2, 2) << std::endl;
 ```
 
 12.
 ```
-Этот код валидный
-char str[] = "Hello";
+Что будет на экране
 
-for (sizet_t i = 0; str[i];) {
-  std::cout << str[++i];
+void SwapPtr(int* a, int* b) {
+  auto tmp = a;
+  a = b;
+  b = tmp;
 }
+
+...
+
+int a = 100;
+int b = 200;
+
+SwapPtr(&a, &b);
+std::cout << a << b << std::endl;
+
+SwapPtr(&a, 300);
+std::cout << a << b << std::endl;
+
 ```
 
 13.
 ```
-Этот код валидный
-int array[4] {3, 4};
-int array2[4] {5, 7};
+Такой код скомпилируеться
 
-array2 = array;
-
-for( auto value : array2) {
-  std::cout << value;
+void print(int* a, int& b, const int& c) {
+  std::cout << a << b << c << std::endl;
 }
+
+...
+
+int a = 90;
+int b = 200;
+
+print(&a, b, 500);
 ```
 
 14.
 ```
-что будет напечатанно на экране
-  int array3D[3][3][3] = {
-                          {{1,2,3}, {4,5,6}, {7,8,9}},
-                          {{10,11,12}, {13,14,15}, {16,17,18}},
-                          {{19,20,21}, {22,23,24}, {25,26,27}}
-                         }; // инициализация двумерного массива
+Такой код скомпилируеться
 
-std::cout << array3D[0][1][2];
+void print(int a = 90, int b, int c = 200) {
+  std::cout << a << b << c << std::endl;
+}
+
+...
+
+print(100, 101, 200);
 ```
-
 
 15.
 ```
-что будет на экране
+Что в этом коде не так
 
-int array2[][] = {{1,2,3}, {4,5,6}, {7,8,9}};
+void print(int a, int b, int c) {
+  std::cout << a << b << c << std::endl;
+}
 
-std::cout << array2[1][1];
+...
+
+int a = 90;
+int b = 80;
+
+print(++a, b++, a + b);
 ```
 
 16.
 ```
-что будет на экране
+Чему будет равно res
+void print(int a, int b, int c) {
+  std::cout << a << b << c << std::endl;
+}
 
-int *ptr, ptr1, ptr2;
+...
 
-ptr2 = 0;
+int a = 90;
+int b = 80;
 
-std::cout << *ptr2;
-```
-
-16.
-```
-  const int *ptr;
-  int value = 90;
-  ptr = &value;
-  ++*ptr;
-  std::cout << *ptr;
+print(++a, b++, a + b);
 ```
 
 17.
 ```
-  int value = 300;
+Чему будет равно value
+int value = 500;
 
-  int *ptr = &value;
+int& x = value;
 
-  const int *const ptr2;
+++x;
 
-  ptr2 = ptr;
+x += 10;
+
+std::cout << x << std::endl;
 ```
 
 18.
 ```
-  int array[10] {1};
-  int *ptr_begin = array - 1;
-  int *ptr_end = array + 10;
+Такой код скомпилируеться
 
-  while(ptr_begin != ptr_end) {
-    std::cout << *ptr_begin++ << std::endl; 
-  }
+int value = 500;
+
+int& ref = value;
+
+const int& cref = ref + 100;
+
+
 ```
 
 19.
 ```
-  int array[10] {1};
+Чему будет равно value
 
-  for (size_t i = 0; i < 10; ++array) {
-    std::cout << array[i] << std::endl; 
-  }
+int* ptr = nullptr;
+
+int& value = *ptr;
+
+value = 90;
+
+```
+
+19.
+```
+Что будет на экране
+
+int& calc(int a, int b) {
+  auto res = a + b;
+  return res;
+}
+
+std::cout << calc(100, 20) << std::endl;
 ```
 
 20.
 ```
-  int value = 30;
-  void * ptr = &value;
-  std::out << *ptr << std::endl;
+Что будет на экране
 
-  int array[3] {1, 2, 3};
+const char* getString() {
+  return "Hello World";
+}
 
-  ptr = array;
-  std::cout << ptr[2] << std::endl
+std::cout << (getString() + 3) << std::endl;
 ```
 
 21.
 ```
-Что будет выведено на экран
-    int a[5] = { 4, 5, 2, 3, 1 }; 
-    int i = *a; 
- 
-    for (;i;) 
-        std::cout << i--[a];
+Что будет на экране
 
-Варианты:
-- ошибка компиляции
-- 3254
-- 1 3 2 5
-```
+int a = 200;
 
-21.
-```
-Что будет выведено на экран
+auto lambda = [&a] (int value) {
+  a += value;
+};
 
-#define ELEMENT_COUNT(a) (sizeof(a)/sizeof(a[0])) 
+lambda(10);
+lambda(10);
+lambda(10);
 
-    int a[5] = { 4, 5, 2, 3, 1 }; 
-    int *ptr = a;
- std::cout << ELEMENT_COUNT(a);
- std::cout << ELEMENT_COUNT(ptr);
+std::cout << a << std::endl;
 ```
 
 22.
 ```
-Чему равно знчение переменной res
-#define F(x) (2*x*x) 
- 
-int main() { 
-    int a = 1, b = 2; 
-    int res = F(a + b); 
-    return 0; 
-} 
+Что будет на экране
+
+int a = 2;
+int b = 2;
+
+auto mul = [&a, b] () {
+  a *= ++b;
+};
+
+mul();
+
+std::cout << a  << b << std::endl;
 ```
 
 23.
 ```
-Что напечатает программа
-cout << "Hello, World!" + 3 << endl;
+#include <iostream>
+
+static int a;
+
+int main() {
+  auto inc = []() -> int& {
+    return (++a);
+  };
+
+  (++inc());
+  std::cout << a  << std::endl;
+  return 0;
+}
+
 ```
 
 24.
 ```
-Откомпилируеться ли данный код
-int main() 
-{ 
-    int h = int(); 
-    const int* i = int(); 
-    int const* j = int(); 
-    int* const k = &h;  
- 
-    ++i;  //1  
-    ++j;  //2  
-    ++k;  //3  
-    ++*k; //4  
-}
+  int a = 100;
+  int b = 300;
+  auto print = [new_value = a, &b = a]() mutable {
+    std::cout << ++new_value << " " << ++b << std::endl;
+  };
 
-Если нет то в какой из строччек ошибка
+  print();
+  std::cout << a << " " << b << std::endl;
+
+```
+
+25.
+```
+Скомпилируется ли следующий код
+int foo(); 
+char foo();
+
+int main() {
+  return 0;
+}
+```
+
+26.
+```
+Есть ли в коде ошибки?
+void foo(int a) { 
+  int& ra = a; 
+  return ra; 
+} 
+ 
+int main(int argc, char* argv[]) { 
+  int a = foo(3); 
+ 
+  return 0; 
+}
 ```
