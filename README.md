@@ -2,389 +2,232 @@
 
 1.
 ```
-Такой код валидный если наша программа состоит только с одного файла исходного кода
+Такой код валидный
 
-#include <iostream>
-
-long test(int a, int b) {
-  std::cout<< "test" << std::endl;
-  return a + b;
+void print(int a) {
+  ++a;
+  std::cout << a << std::endl;
 }
+
+void print(const int a) {
+  std::cout << a << std::endl;
+}
+
 ```
 
 2.
 ```
-Такой код правильный
-long test(int a, int b);
-long test(int a, int b) {
-  return a + b;
+Что выведет на экран
+
+void print(int a) {
+  ++a;
+  std::cout << a << std::endl;
 }
-int main(int argc, char const *argv[]) {
-  return 0;
+
+void print(const int* a) {
+  std::cout << *a << std::endl;
 }
+
+...
+
+print(NULL);
+print(0);
 ```
 
 3.
 ```
 Такой код правильный
-long test(int a, int b);
-long test(int a, int b) {
+long calc(int a, int b) {
   return a + b;
 }
 
-long test(int a, int b) {
-  return a + b;
+double& calc(int a, int b) {
+  static double res;
+  res = a + b;
+  return &res;
 }
 
-int main(int argc, char const *argv[]) {
-  return 0;
-}
 ```
 
 4.
 ```
-Что в этом коде не так
-long test(int a, int b) {
-  return a + b;
+Что мне выведет на экране
+
+void print(int (&array)[10]) {
+
 }
+
+void print(char (&array)[20]) = delete;
+
 ...
-test(10, 40, 50) // 1
-test(10, 40) // 2
-test(40) // 2
 
-int a = 90;
-int b = 100;
+char array[20] = "Hello";
 
-std::cout << test(&a, &b) << std::endl;
+print(array);
 ```
 
 5.
 ```
-Что будет на экране
-long mult(int a, b) {
-  return a + b;
-}
-...
-int a = 90;
-int b = 100;
+Что будет выведено на экране
 
-std::cout << mult(a, b) << std::endl;
+void print(int array[10][], size_t size_second) {
+  for (size_t i = 0; i < 10; ++i) {
+    for (size_t j = 0; j < size_second; ++j) {
+      print("%d", array[i][j]);
+  }
+}
+
+...
+int array[2][2] {{1, 2}, {1, 2}};
+
+print(array);
 ```
 
 6.
 ```
-Такой код скомпилируеться
-
-void print(int a, int b, int) {
-  std::cout << a << b << std::endl;
+Что будет на экране
+void print(int *array) {
+  size_t count = sizeof(array) / sizeof(array[0]);
+  for(size_t i = 0; i < count; ++i) {
+    print("%d", array[i]);
+  }
 }
-...
-int a = 90;
-int b = 100;
 
-std::cout << print(a, b) << std::endl;
+...
+
+int array[5] {1, 2, 3, 4, 5};
+print(array);
 ```
 
 7.
 ```
-Что будет на экране
+Чем отличаються эти две функции
 
-long calc(auto a, auto b) {
-  return a + b;
+extern "C" {
+  void print(double a) {
+    ++a;
+    std::cout << a << std::endl;
+  }
 }
-...
-int a = 90;
-int b = 100;
 
-std::cout << print(a, b) << std::endl;
+void print(int a) {
+  std::cout << a << std::endl;
+}
+
 ```
 
 8.
 ```
-Такой код скомпилируеться
+Это валидное объявление структуры
 
-auto calc(int a, int b) {
-  return a + b;
-}
-
-long calcSqrt(int a) {
-  if (a > 0) {
-    return sqrt(a);
-  }
-}
-
-bool isPositiv(int a) {
-  if (a > 0) {
-    return true;
-  } else {
-    return &a;
-  }
-}
-
-auto calcSumm(int a, int b, int c) -> decltype(a + b + c) {
-  return a + b + c;
-}
+struct {
+  int a;
+  int b;
+} unnamed;
 
 ```
 
 9.
 ```
-Что будет на экране
+Что чему будет проинициализировано
+struct Test{
+  int a;
+  int b;
+} unnamed;
 
-void changeSign(int a) {
-  if (a > 0) {
-    a = -a;
-  }
-}
-...
-int a = 90;
-changeSign(a);
+Test test_empty;
 
-std::cout << a << std::endl;
+Test test_b{};
+Test test_exp{1, 2};
+
+unnamed.a = 20;
+
+unnamed.b = 30;
+
+test_b = unnamed;
+
 ```
 
 10.
 ```
-Что будет на экране
+Чему будут равны p и w
+struct People;
 
-void swap(int &a, int& b) {
-  auto tmp = a;
-  a = b;
-  b = tmp;
+struct Worker {
+  int age = 10;
+  const char *office = "Lva Tolstogo";
 }
 
+People p;
 
-...
-int a = 90;
-int b = 100;
+Worker w;
 
-swap(a, b);
+p = w;
 
-swap(a, 100);
-
-
-std::cout << a  << " " << b<< std::endl;
 ```
 
 11.
 ```
-Что будет на экране
-
-long mul(int a, int b = 10) {
-  return a * b;
+Чему равен размер структуры Test
+struct Test {
+  int a;
+  long int b;
 }
-
 
 ...
 
-std::cout << mul(2, 2) << std::endl;
+std::cout << sizeof(Test) << std::endl;
+
 ```
 
 12.
 ```
 Что будет на экране
+enum Digit {
+  FIRST,
+  SECOND,
+  THIRD,
+  FOURTH,
+  FIVE
+};
 
-void SwapPtr(int* a, int* b) {
-  auto tmp = a;
-  a = b;
-  b = tmp;
-}
+std::cout << FIRST << std::endl;
 
-...
+std::cout << Digit::FIVE << std::endl;
 
-int a = 100;
-int b = 200;
+Digit digit = FOURTH;
 
-SwapPtr(&a, &b);
-std::cout << a << b << std::endl;
+digit += FIVE;
 
-SwapPtr(&a, 300);
-std::cout << a << b << std::endl;
+std::cout << digit << endl;
 
+digit = 2;
+
+std::cout << digit << endl;
 ```
 
 13.
 ```
-Такой код скомпилируеться
+Что будет на экране
+enum class Digit : uunsigned int {
+  First,
+  Second,
+  Third
+};
 
-void print(int* a, int& b, const int& c) {
-  std::cout << a << b << c << std::endl;
-}
-
-...
-
-int a = 90;
-int b = 200;
-
-print(&a, b, 500);
+std::cout << Digit::First << std::endl;
 ```
 
 14.
 ```
-Такой код скомпилируеться
-
-void print(int a = 90, int b, int c = 200) {
-  std::cout << a << b << c << std::endl;
-}
-
-...
-
-print(100, 101, 200);
-```
-
-15.
-```
-Что в этом коде не так
-
-void print(int a, int b, int c) {
-  std::cout << a << b << c << std::endl;
-}
-
-...
-
-int a = 90;
-int b = 80;
-
-print(++a, b++, a + b);
-```
-
-16.
-```
-Чему будет равно res
-void print(int a, int b, int c) {
-  std::cout << a << b << c << std::endl;
-}
-
-...
-
-int a = 90;
-int b = 80;
-
-print(++a, b++, a + b);
-```
-
-17.
-```
-Чему будет равно value
-int value = 500;
-
-int& x = value;
-
-++x;
-
-x += 10;
-
-std::cout << x << std::endl;
-```
-
-18.
-```
-Такой код скомпилируеться
-
-int value = 500;
-
-int& ref = value;
-
-const int& cref = ref + 100;
-
-
-```
-
-19.
-```
-Чему будет равно value
-
-int* ptr = nullptr;
-
-int& value = *ptr;
-
-value = 90;
-
-```
-
-19.
-```
 Что будет на экране
-
-int& calc(int a, int b) {
-  auto res = a + b;
-  return res;
+union Vector {
+  int x;
+  int y;
 }
 
-std::cout << calc(100, 20) << std::endl;
-```
+Vector vec;
+vec.x = 90;
 
-20.
-```
-Что будет на экране
-
-const char* getString() {
-  return "Hello World";
-}
-
-std::cout << (getString() + 3) << std::endl;
-```
-
-21.
-```
-Что будет на экране
-
-int a = 200;
-
-auto lambda = [&a] (int value) {
-  a += value;
-};
-
-lambda(10);
-lambda(10);
-lambda(10);
-
-std::cout << a << std::endl;
-```
-
-22.
-```
-Что будет на экране
-
-int a = 2;
-int b = 2;
-
-auto mul = [&a, b] () {
-  a *= ++b;
-};
-
-mul();
-
-std::cout << a  << b << std::endl;
-```
-
-23.
-```
-#include <iostream>
-
-static int a;
-
-int main() {
-  auto inc = []() -> int& {
-    return (++a);
-  };
-
-  (++inc());
-  std::cout << a  << std::endl;
-  return 0;
-}
-
-```
-
-24.
-```
-  int a = 100;
-  int b = 300;
-  auto print = [new_value = a, &b = a]() mutable {
-    std::cout << ++new_value << " " << ++b << std::endl;
-  };
-
-  print();
-  std::cout << a << " " << b << std::endl;
-
+std::cout << vect.y << std::endl;
 ```
