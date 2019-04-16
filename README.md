@@ -2,232 +2,367 @@
 
 1.
 ```
-Такой код валидный
+Опишите что в этом коде не так
 
-void print(int a) {
-  ++a;
-  std::cout << a << std::endl;
+class Test {
+  public:
+    Test(int a){}
+  private:
+    Test(const Test&);
 }
 
-void print(const int a) {
-  std::cout << a << std::endl;
-}
+....
 
+Test t;
+
+Test t2(30);
+
+t = t2;
+
+Test t3(t);
 ```
 
 2.
 ```
-Что выведет на экран
+Какая из функций шаблона будет вызвана
+template <class T>
+class Test;
 
-void print(int a) {
-  ++a;
-  std::cout << a << std::endl;
-}
+template <class T>
+class Test<T*> {
+  public:
+   Test() : value(new T{20}) {}
+   void print() {std::cout << __PRETTY_FUNCTION__ << " " << *value << std::endl;}
+  private:
+   T* value;
+};
 
-void print(const int* a) {
-  std::cout << *a << std::endl;
-}
+template <>
+class Test<float> {
+  public:
+   void print() {std::cout << __PRETTY_FUNCTION__ << " " <<  value << std::endl;}
+  private:
+   float value;
+};
 
-...
+....
 
-print(NULL);
-print(0);
+  Test<float> t;
+  t.print();
+  Test<int*> t2;
+  t2.print();
+
 ```
 
 3.
 ```
-Такой код правильный
-long calc(int a, int b) {
-  return a + b;
-}
-
-double& calc(int a, int b) {
-  static double res;
-  res = a + b;
-  return &res;
-}
-
+В чем разница между макросом и шаблоном
 ```
 
 4.
 ```
-Что мне выведет на экране
+Что в этом коде не так
 
-void print(int (&array)[10]) {
-
-}
-
-void print(char (&array)[20]) = delete;
-
-...
-
-char array[20] = "Hello";
-
-print(array);
-```
-
-5.
-```
-Что будет выведено на экране
-
-void print(int array[10][], size_t size_second) {
-  for (size_t i = 0; i < 10; ++i) {
-    for (size_t j = 0; j < size_second; ++j) {
-      print("%d", array[i][j]);
-  }
+template <class T = int, class U>
+class Test {
+  public:
+    void print() {
+      std::cout << value1 << " " << value2 << std::endl;
+    }
+  private:
+    T value1 = T{};
+    U value2 = U{};
 }
 
 ...
-int array[2][2] {{1, 2}, {1, 2}};
 
-print(array);
+Test<float> t;
+```
+
+6.
+```
+Что в этом коде не так
+template<clas T>
+void print(T value ){
+  std::cout << value << std::endl;
+}
+
+template<clas T>
+void print<T*>(T* value ){
+  std::cout << value << std::endl;
+}
+
 ```
 
 6.
 ```
 Что будет на экране
-void print(int *array) {
-  size_t count = sizeof(array) / sizeof(array[0]);
-  for(size_t i = 0; i < count; ++i) {
-    print("%d", array[i]);
-  }
+template<class T>
+void print(T value ){
+  std::cout << value << std::endl;
+}
+
+template<>
+void print<const char *>(const char* value ){
+  std::cout << value << std::endl;
 }
 
 ...
 
-int array[5] {1, 2, 3, 4, 5};
-print(array);
+print(4000);
+print<float>(30.f);
+
+int a = 90;
+print(&a);
+
+const char* c_string = "Hello";
+print(c_string);
+
+```
+
+
+5.
+```
+Что будет выведено на экран
+class C {
+public:
+  C(int i) : i(i) { std::cout << i; }
+  ~C() { std::cout << i + 5; }
+
+private:
+  int i;
+};
+
+int main() {
+  const C &c = C(1);
+  C(2);
+  C(3);
+
+
+// Hint! подумайте о расширении времени жизни временной переменной
+```
+
+6.
+```
+Что будет выведено на экране
+
+#include <iostream>
+
+class Test {
+  public:
+   Test(int a): a(a) {
+
+   }
+   void print() {std::cout << a << std::endl;}
+  private:
+   int a = 90;
+};
+
+
+int main(int argc, char const *argv[]) {
+
+  const unsigned SIZE = 20;
+  Test test[SIZE];
+  for (unsigned i = 0; i < SIZE; ++i) {
+    test[i].print();
+  }
+  return 0;
+}
 ```
 
 7.
 ```
-Чем отличаються эти две функции
+Какие строчки нужно закомментировать, что бы скомпилировался следующий фрагмент кода:
 
-extern "C" {
-  void print(double a) {
-    ++a;
-    std::cout << a << std::endl;
-  }
-}
-
-void print(int a) {
-  std::cout << a << std::endl;
-}
+class A 
+{ 
+public: 
+    int l; 
+ 
+protected: 
+    int m; 
+ 
+private: 
+    int n; 
+}; 
+ 
+ 
+class B : public A 
+{ 
+public: 
+    int l; 
+ 
+protected: 
+    int m; 
+     
+    void func2() 
+    { 
+        l = A::l;   // 1 
+        m = A::m;   // 2 
+        n = A::n;   // 3 
+    } 
+ 
+private: 
+    int n; 
+}; 
 
 ```
 
 8.
 ```
-Это валидное объявление структуры
+class A {
+  int32_t a; 
+}
 
-struct {
-  int a;
-  int b;
-} unnamed;
+class B: public A {
+  int32_t b; 
+}
 
+std::cout << sizeof(B);
+```
+
+8.
+```
+class A {
+  public:
+   int calc(int a) {
+     return b + a;
+   }
+  private:
+   int b = 10;  
+}
+
+class B: public A {
+  public:
+   void calc(int a, int c) {
+     return a + c + b;
+   } 
+  int32_t b = 40;
+}
+
+....
+B b;
+
+A *a = new B{};
+
+std::cout << a->calc(10);
+
+std::cout << b.calc(10);
 ```
 
 9.
 ```
-Что чему будет проинициализировано
-struct Test{
-  int a;
-  int b;
-} unnamed;
+class Test {
+  public:
+    Test(int a, int b) a(a), b(b) {
 
-Test test_empty;
+    }
 
-Test test_b{};
-Test test_exp{1, 2};
+  void print() {
+    std::cout << a << b << std::endl;
+  }
+  private:
+    int a;
+    int b;
+}
 
-unnamed.a = 20;
+class Test2: public Test {
+  public:
+    Test(int c) c(c){
 
-unnamed.b = 30;
+    }
 
-test_b = unnamed;
+  private:
+    int c;
+}
 
+....
+Test2 t{10};
+
+t.print();
 ```
 
 10.
 ```
-Чему будут равны p и w
-struct People;
+class A {
+  public:
+   void print() {
+     std::cout << "A::print()" << std::endl;
+   }
+};
 
-struct Worker {
-  int age = 10;
-  const char *office = "Lva Tolstogo";
-}
+class B: public A {
+  public:
+    void calc(int a, int b) { return a + b;}
+};
 
-People p;
+class C: private B {
+  public:
+    void calc(int b) { return b + 10;}
+};
 
-Worker w;
+....
+C c;
 
-p = w;
+c.print();
 
+A& a = c;
 ```
 
 11.
 ```
-Чему равен размер структуры Test
-struct Test {
-  int a;
-  long int b;
+class A {
+ public:
+  void print() {
+    std::cout << __PRETTY_FUNCTION__ << std::endl;   
+  }
+};
+
+class B {
+ public:
+  void print() {
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
+  }
+};
+
+class C : public A, public B {};
+
+int main(int argc, char const *argv[]) {
+  C c;
+  c.print();
+  return 0;
+}
+```
+
+
+11.
+```
+
+class Base {
+  public:
+   virtual void print() { std::cout << res << std::endl;}
+   virtual void calc(int a_, int b_) { res = a_ + b_;}
+  private:
+   long res = 0;
+};
+
+class Derived: public Base {
+  public:
+   void print() { std::cout << res << std::endl;}
+   void calc(double a_, double b_) { res = a_ + b_;}
+  private:
+   long double res = 0;
+};
+
+void print(Base& base) {
+  base.calc(10, 20);
+  base.print();
 }
 
 ...
 
-std::cout << sizeof(Test) << std::endl;
+Derived d;
 
-```
+print(d);
 
-12.
-```
-Что будет на экране
-enum Digit {
-  FIRST,
-  SECOND,
-  THIRD,
-  FOURTH,
-  FIVE
-};
-
-std::cout << FIRST << std::endl;
-
-std::cout << Digit::FIVE << std::endl;
-
-Digit digit = FOURTH;
-
-digit += FIVE;
-
-std::cout << digit << endl;
-
-digit = 2;
-
-std::cout << digit << endl;
-```
-
-13.
-```
-Что будет на экране
-enum class Digit : uunsigned int {
-  First,
-  Second,
-  Third
-};
-
-std::cout << Digit::First << std::endl;
-```
-
-14.
-```
-Что будет на экране
-union Vector {
-  int x;
-  int y;
-}
-
-Vector vec;
-vec.x = 90;
-
-std::cout << vect.y << std::endl;
 ```
